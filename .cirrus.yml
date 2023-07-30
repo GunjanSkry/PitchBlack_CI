@@ -1,0 +1,35 @@
+env:
+    # RECOVERY REPOSITORY SOURCE TWRP,PBRP,SHRP
+    MANIFEST: --depth=1 -u https://github.com/PitchBlackRecoveryProject/manifest_pb.git
+
+    # Config
+    CONFIG: config.sh
+
+    # Telegram
+    TG_CHAT_ID: ENCRYPTED[f95a5788b65caa9b6d8b34e1e90a9da26fba69608522e5309e03d7e9af39ae90e971f1b2e89021d1bb9cb03eeff73cf2]
+    TG_TOKEN: ENCRYPTED[4d69a93b95d447e99f888b98323ceba48bddf06fd17bba8c395f9114a441d0ce8b18db4019d6522f3850a67a84958ade]
+
+    # Cirrus Specific Vars (Do *NOT* Change)
+    CIRRUS_SHELL: bash
+
+task:
+  name: "Recovery Build"
+  only_if: $CIRRUS_BRANCH == 'main'
+  timeout_in: 120m
+  container:
+      image: ghcr.io/sushrut1101/docker:latest
+      cpu: 8
+      memory: 16G
+
+  Checks_script:
+      - curl -sL https://raw.githubusercontent.com/GunjanSkry/pbrp_ci/main/scripts/checks.sh | bash
+
+  Sync_script:
+      - curl -sL https://raw.githubusercontent.com/GunjanSkry/pbrp_ci/main/scripts/sync.sh | bash
+
+  Build_script:
+      - curl -sL https://raw.githubusercontent.com/GunjanSkry/pbrp_ci/main/scripts/build.sh | bash
+
+  Upload_script:
+      - export TIMEOUT=43200 # Link timeout (in minutes)
+      - curl https://raw.githubusercontent.com/GunjanSkry/pbrp_ci/main/scripts/upload.sh | bash
